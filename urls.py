@@ -7,6 +7,10 @@ urlpatterns = [
     # Dashboard
     path('', views.dashboard, name='dashboard'),
 
+    # Navigation tab aliases
+    path('documents/', views.signature_requests_list, name='documents'),
+
+
     # SignatureRequest
     path('signature_requests/', views.signature_requests_list, name='signature_requests_list'),
     path('signature_requests/add/', views.signature_request_add, name='signature_request_add'),
