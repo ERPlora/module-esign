@@ -28,3 +28,16 @@ PERMISSIONS = [
 'esign.change_signaturerequest',
 'esign.manage_settings',
 ]
+
+ROLE_PERMISSIONS = {
+    "admin": ["*"],
+    "manager": [
+        "add_signaturerequest",
+        "change_signaturerequest",
+        "view_signaturerequest",
+    ],
+    "employee": [
+        "add_signaturerequest",
+        "view_signaturerequest",
+    ],
+}
