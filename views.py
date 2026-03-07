@@ -3,6 +3,8 @@ E-Signatures Module Views
 """
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
+from django.http import HttpResponse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, render as django_render
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -113,6 +115,7 @@ def signature_requests_list(request):
     }
 
 @login_required
+@htmx_view('esign/pages/signature_request_add.html', 'esign/partials/signature_request_add_content.html')
 def signature_request_add(request):
     hub_id = request.session.get('hub_id')
     if request.method == 'POST':
@@ -136,10 +139,13 @@ def signature_request_add(request):
         obj.expires_at = expires_at
         obj.notes = notes
         obj.save()
-        return _render_signature_requests_list(request, hub_id)
-    return django_render(request, 'esign/partials/panel_signature_request_add.html', {})
+        response = HttpResponse(status=204)
+        response['HX-Redirect'] = reverse('esign:signature_requests_list')
+        return response
+    return {}
 
 @login_required
+@htmx_view('esign/pages/signature_request_edit.html', 'esign/partials/signature_request_edit_content.html')
 def signature_request_edit(request, pk):
     hub_id = request.session.get('hub_id')
     obj = get_object_or_404(SignatureRequest, pk=pk, hub_id=hub_id, is_deleted=False)
@@ -155,7 +161,7 @@ def signature_request_edit(request, pk):
         obj.notes = request.POST.get('notes', '').strip()
         obj.save()
         return _render_signature_requests_list(request, hub_id)
-    return django_render(request, 'esign/partials/panel_signature_request_edit.html', {'obj': obj})
+    return {'obj': obj}
 
 @login_required
 @require_POST
